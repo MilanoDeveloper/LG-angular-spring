@@ -11,7 +11,7 @@ export class CoursesService {
 
   constructor(private httpClient: HttpClient) { }
 
-  private readonly API = "./../../../assets/courses.json";
+  private readonly API = "api/courses";
 
   list() {
     return this.httpClient.get<Course[]>(this.API)
@@ -20,5 +20,9 @@ export class CoursesService {
       delay(1000),
       tap(courses => console.log(courses))
     );
+  }
+
+  save(record: Course){
+    return this.httpClient.post<Course>(this.API, record).pipe(first());
   }
 }
