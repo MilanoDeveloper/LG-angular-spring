@@ -7,6 +7,7 @@ import { catchError, Observable, of } from 'rxjs';
 import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 import { Course } from '../../model/course';
 import { CoursesService } from '../../services/courses.service';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-courses',
@@ -27,21 +28,21 @@ export class CoursesComponent implements OnInit {
     private _snackBar: MatSnackBar,
     private route: ActivatedRoute
   ) {
-   this.refresh();
+    this.refresh();
   }
 
   ngOnInit(): void {
   }
 
-  onAdd(){
-    this.router.navigate(['new'], {relativeTo: this.route});
+  onAdd() {
+    this.router.navigate(['new'], { relativeTo: this.route });
   }
-  onEdit(course: Course){
-    this.router.navigate(['edit', course._id], {relativeTo: this.route});
+  onEdit(course: Course) {
+    this.router.navigate(['edit', course._id], { relativeTo: this.route });
   }
 
 
-  refresh(){
+  refresh() {
     this.courses$ = this.coursesService.list()
       .pipe(
         catchError(error => {
@@ -51,18 +52,29 @@ export class CoursesComponent implements OnInit {
       );
   }
 
-  onDelete(course: Course){
-    this.coursesService.remove(course._id).subscribe(
-      () => {
-        this.refresh();
-        this._snackBar.open("Curso removido com sucesso!", " X ",
-          {duration: 3000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center'
-          });
-      },
-      error => this.onError("Erro ao tentar remover curso")
-    );
+  onDelete(course: Course) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: 'Tem certeza que deseja remover o curso?',
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.coursesService.remove(course._id).subscribe(
+          () => {
+            this.refresh();
+            this._snackBar.open("Curso removido com sucesso!", " X ",
+              {
+                duration: 3000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center'
+              });
+          },
+          error => this.onError("Erro ao tentar remover curso")
+        );
+      }
+    });
+
   }
 
 
