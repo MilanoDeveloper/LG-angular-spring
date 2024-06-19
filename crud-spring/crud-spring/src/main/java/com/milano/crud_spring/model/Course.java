@@ -5,15 +5,19 @@ import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.milano.crud_spring.enums.Category;
+import com.milano.crud_spring.enums.Status;
+import com.milano.crud_spring.enums.converters.CategoryConverter;
+import com.milano.crud_spring.enums.converters.StatusConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -28,22 +32,18 @@ public class Course {
     private Long id;
 
     @NotBlank
-    @NotNull 
-    @Length(min =5, max = 100)
+    @NotNull
+    @Length(min = 5, max = 100)
     @Column(length = 100, nullable = false)
     private String name;
 
-    @NotBlank
-    @Length(max = 100)
-    @Pattern(regexp = "Back-end|Front-end")
+    @NotNull
     @Column(length = 10, nullable = false)
-    private String category;
+    @Convert(converter = CategoryConverter.class)
+    private Category category;
 
-    @NotBlank
-    @Length(max = 10)
-    @Pattern(regexp = "Ativo|Inativo")
+    @Convert(converter = StatusConverter.class)
     @Column(length = 10, nullable = false)
-    private String status = "Ativo";
+    private Status status = Status.ACTIVE;
 
-
-}   
+}
