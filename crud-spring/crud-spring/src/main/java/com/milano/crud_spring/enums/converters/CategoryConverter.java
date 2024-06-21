@@ -1,7 +1,8 @@
 package com.milano.crud_spring.enums.converters;
 
-import com.milano.crud_spring.enums.Category;
 import java.util.stream.Stream;
+
+import com.milano.crud_spring.enums.Category;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -22,11 +23,10 @@ public class CategoryConverter implements AttributeConverter<Category, String> {
         if (value == null) {
             return null;
         }
-
         return Stream.of(Category.values())
-        .filter(c -> c.getValue().equals(value))
-        .findFirst()
-        .orElseThrow(IllegalArgumentException::new);
+                .filter(c -> c.getValue().equals(value))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
 }

@@ -23,11 +23,10 @@ public class StatusConverter implements AttributeConverter<Status, String> {
         if (value == null) {
             return null;
         }
-
         return Stream.of(Status.values())
-        .filter(c -> c.getValue().equals(value))
-        .findFirst()
-        .orElseThrow(IllegalArgumentException::new);
+                .filter(c -> c.getValue().equals(value))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
 }

@@ -1,17 +1,28 @@
-import { Location } from '@angular/common';
+import { Location, NgIf, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, UntypedFormArray, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, UntypedFormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { CoursesService } from '../../services/courses.service';
 import { ActivatedRoute } from '@angular/router';
 import { Course } from '../../model/course';
 import { Lesson } from '../../model/lesson';
+import { FormUtilsService } from '../../../shared/form/form-utils.service';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatHint, MatError, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 
 @Component({
-  selector: 'app-course-form',
-  templateUrl: './course-form.component.html',
-  styleUrl: './course-form.component.scss'
+    selector: 'app-course-form',
+    templateUrl: './course-form.component.html',
+    styleUrl: './course-form.component.scss',
+    standalone: true,
+    imports: [MatCard, MatToolbar, MatCardContent, ReactiveFormsModule, MatFormField, MatInput, MatHint, NgIf, MatError, MatLabel, MatSelect, MatOption, MatIconButton, MatIcon, NgFor, MatPrefix, MatCardActions, MatButton]
 })
 export class CourseFormComponent implements OnInit {
 
@@ -21,13 +32,28 @@ export class CourseFormComponent implements OnInit {
     private service: CoursesService,
     private _snackBar: MatSnackBar,
     private location: Location,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    public formUtil: FormUtilsService) {
   }
 
   onSubmit() {
-    this.service.save(this.form.value).subscribe(data => this.onSucess(), error => {
-      this.onError()
-    });
+    if(this.form.valid){
+      this.service.save(this.form.value).subscribe(data => this.onSucess(), error => {
+        this.onError()
+      });
+    }else{
+      this.formUtil.validateAllFormFields(this.form);
+    }
+  }
+
+  addNewLesson(){
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    lessons.push(this.createLesson());
+  }
+
+  removeLesson(index: number){
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    lessons.removeAt(index);
   }
 
   getLessonsFormArray(){
@@ -47,26 +73,6 @@ export class CourseFormComponent implements OnInit {
     this._snackBar.open("Erro ao salvar curso", "", { duration: 3000 });
   }
 
-  errorMessage(fieldName: string) {
-    const field = this.form.get(fieldName);
-
-    if (field?.hasError('required')) {
-      return "Campo Obrigatorio"
-    }
-
-    if (field?.hasError('minlength')) {
-      const requiredLength = field.errors ? field.errors['minlength']['requiredLength'] : 5;
-      return "Tamanho minimo precisa ser de ${requiredLength} caracteres";
-    }
-    if (field?.hasError('maxlength')) {
-      const requiredLength = field.errors ? field.errors['maxlength']['requiredLength'] : 150;
-      return 'Tamanho maximo excedido de ${requiredLength} caracteres';
-    }
-
-    return 'Campo Invalido';
-  }
-
-
   ngOnInit(): void {
     const course: Course = this.route.snapshot.data['course'];
 
@@ -74,7 +80,7 @@ export class CourseFormComponent implements OnInit {
         _id: [course._id],
         name: [course.name, [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
         category: [course.category, [Validators.required]],
-        lessons: this.formBuilder.array(this.retrieveLessons(course))
+        lessons: this.formBuilder.array(this.retrieveLessons(course), Validators.required)
     });
   }
 
@@ -91,8 +97,8 @@ export class CourseFormComponent implements OnInit {
   private createLesson(lesson: Lesson = { id: '', name: '', youtubeUrl: '' }) {
     return this.formBuilder.group({
       id: [lesson.id],
-      name: [lesson.name],
-      youtubeUrl: [lesson.youtubeUrl]
+      name: [lesson.name, [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
+      youtubeUrl: [lesson.youtubeUrl, [Validators.required, Validators.minLength(5), Validators.maxLength(150)]]
     })
   }
 
