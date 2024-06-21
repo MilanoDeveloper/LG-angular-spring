@@ -2,17 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, Observable, of } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 
+import { AsyncPipe, NgIf } from '@angular/common';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatToolbar } from '@angular/material/toolbar';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
+import { CoursesListComponent } from '../../components/courses-list/courses-list.component';
 import { Course } from '../../model/course';
 import { CoursesService } from '../../services/courses.service';
-import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { CoursesListComponent } from '../../components/courses-list/courses-list.component';
-import { NgIf, AsyncPipe } from '@angular/common';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { CoursePage } from '../../model/course-page';
 
 @Component({
     selector: 'app-courses',
@@ -23,7 +24,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 })
 export class CoursesComponent implements OnInit {
 
-  courses$: Observable<Course[]> | null = null;
+  courses$: Observable<CoursePage> | null = null;
   displayedColumns = ['name', 'category', 'actions'];
 
   // coursesService: CoursesService;
@@ -54,7 +55,7 @@ export class CoursesComponent implements OnInit {
       .pipe(
         catchError(error => {
           this.onError("Erro ao carregar cursos");
-          return of([])
+          return of({courses: [], totalElements: 0, totalPages: 0 })
         })
       );
   }

@@ -15,7 +15,7 @@ export class CoursesService {
   private readonly API = "api/courses";
 
   list() {
-    return this.httpClient.get<Course[]>(this.API)
+    return this.httpClient.get<CoursePage>(this.API)
       .pipe(
         first(),
         delay(1000),
