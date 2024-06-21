@@ -14,8 +14,8 @@ export class CoursesService {
 
   private readonly API = "api/courses";
 
-  list() {
-    return this.httpClient.get<CoursePage>(this.API)
+  list(page = 0, pageSize = 10) {
+    return this.httpClient.get<CoursePage>(this.API, { params:{ page: page, pageSize: pageSize}} )
       .pipe(
         first(),
         delay(1000),
@@ -43,7 +43,7 @@ export class CoursesService {
     return this.httpClient.put<Course>(`${this.API}/${record._id}`, record).pipe(first());
   }
 
-  public remove(id: String) {
+  public remove(id: string) {
     return this.httpClient.delete(`${this.API}/${id}`).pipe(first());
   }
 
