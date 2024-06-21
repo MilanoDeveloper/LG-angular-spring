@@ -15,7 +15,7 @@ export class CoursesService {
   private readonly API = "api/courses";
 
   list(page = 0, pageSize = 10) {
-    return this.httpClient.get<CoursePage>(this.API, { params:{ page: page, pageSize: pageSize}} )
+    return this.httpClient.get<CoursePage>(this.API, { params:{ page, pageSize}} )
       .pipe(
         first(),
         delay(1000),

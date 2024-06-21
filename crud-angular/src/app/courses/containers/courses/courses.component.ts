@@ -59,7 +59,10 @@ export class CoursesComponent implements OnInit {
   refresh(pageEvent: PageEvent = {length: 0, pageIndex: 0, pageSize: 10}) {
     this.courses$ = this.coursesService.list(pageEvent.pageIndex, pageEvent.pageSize)
       .pipe(
-
+        tap((data: CoursePage) => {
+          this.pageIndex = pageEvent.pageIndex;
+          this.pageSize = pageEvent.pageSize;
+        }),
 
         catchError(error => {
           this.onError("Erro ao carregar cursos");
