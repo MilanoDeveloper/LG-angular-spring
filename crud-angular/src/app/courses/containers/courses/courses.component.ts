@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, catchError, of, tap } from 'rxjs';
 
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -21,7 +21,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
     templateUrl: './courses.component.html',
     styleUrl: './courses.component.scss',
     standalone: true,
-    imports: [MatCard, MatCardContent, MatToolbar, NgIf, CoursesListComponent, MatProgressSpinner, AsyncPipe, MatPaginatorModule]
+    imports: [MatCard, MatCardContent, MatToolbar, CoursesListComponent, MatProgressSpinner, AsyncPipe, MatPaginatorModule]
 })
 export class CoursesComponent implements OnInit {
 
