@@ -18,6 +18,7 @@ import com.milano.crud_spring.repository.CourseRepository;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -50,9 +51,21 @@ public class CourseService {
      * }
      */
 
+     public CoursePageDTO findAll(@PositiveOrZero int page, @Positive @Max(1000) int pageSize) {
+        Page<Course> coursePage = courseRepository.findAll(PageRequest.of(page, pageSize));
+        List<CourseDTO> list = coursePage.getContent().stream()
+                .map(courseMapper::toDTO)
+                .toList();
+        return new CoursePageDTO(list, coursePage.getTotalElements(), coursePage.getTotalPages());
+    }
+
     public CourseDTO findById(@NotNull @Positive Long id) {
         return courseRepository.findById(id).map(courseMapper::toDTO)
                 .orElseThrow(() -> new RecordNotFoundException(id));
+    }
+
+    public List<CourseDTO> findByName(@NotNull @NotBlank String name) {
+        return courseRepository.findByName(name).stream().map(courseMapper::toDTO).toList();
     }
 
     public CourseDTO create(@Valid @NotNull CourseDTO course) {

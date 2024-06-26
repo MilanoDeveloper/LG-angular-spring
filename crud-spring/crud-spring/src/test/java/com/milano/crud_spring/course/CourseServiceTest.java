@@ -25,7 +25,7 @@ import org.springframework.aop.framework.ProxyFactory;
 
 @ActiveProfiles("test")
 @SpringJUnitConfig(classes = { CourseService.class, CourseMapper.class })
-public class CourseServiceTest {
+class CourseServiceTest {
 
  @MockBean
     private CourseRepository courseRepository;

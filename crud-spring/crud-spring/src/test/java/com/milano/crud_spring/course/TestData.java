@@ -1,7 +1,11 @@
 package com.milano.crud_spring.course;
 
 import java.util.List;
+import java.util.Set;
 
+import com.milano.crud_spring.dto.CourseDTO;
+import com.milano.crud_spring.dto.CourseRequestDTO;
+import com.milano.crud_spring.dto.LessonDTO;
 import com.milano.crud_spring.enums.Category;
 import com.milano.crud_spring.enums.Status;
 import com.milano.crud_spring.model.Course;
@@ -30,7 +34,20 @@ public class TestData {
         lesson.setName(LESSON_NAME);
         lesson.setYoutubeUrl(LESSON_YOUTUBE);
         lesson.setCourse(course);
+        course.setLessons((List<Lesson>) Set.of(lesson));
         return course;
+    }
+
+    public static CourseDTO createValidCourseDTO() {
+        return new CourseDTO(1L, COURSE_NAME, Category.BACK_END.getValue(), createLessonsDTO());
+    }
+
+    public static CourseRequestDTO createValidCourseRequest() {
+        return new CourseRequestDTO(COURSE_NAME, Category.BACK_END.getValue(), createLessonsDTO());
+    }
+
+    private static List<LessonDTO> createLessonsDTO() {
+        return List.of(new LessonDTO(1, LESSON_NAME, LESSON_YOUTUBE));
     }
 
     public static List<Course> createInvalidCourses() {
@@ -54,4 +71,21 @@ public class TestData {
         return course;
     }
 
+    public static List<CourseRequestDTO> createInvalidCoursesDTO() {
+        final String validName = COURSE_NAME;
+        final String validCategory = Category.BACK_END.getValue();
+        final String empty = "";
+
+        return List.of(
+                new CourseRequestDTO(null, null, createLessonsDTO()),
+                new CourseRequestDTO(validCategory, null, createLessonsDTO()),
+                new CourseRequestDTO(validCategory, empty, createLessonsDTO()),
+                new CourseRequestDTO(validCategory, INVALID_COURSE_NAME, createLessonsDTO()),
+                new CourseRequestDTO(validCategory, LOREN_IPSUM, createLessonsDTO()),
+                new CourseRequestDTO(null, validName, createLessonsDTO()),
+                new CourseRequestDTO(empty, validName, createLessonsDTO()),
+                new CourseRequestDTO(LOREN_IPSUM, validName, createLessonsDTO()),
+                new CourseRequestDTO(validCategory, validName, createLessonsDTO()),
+                new CourseRequestDTO(validCategory, validName, List.of()));
+    }
 }
